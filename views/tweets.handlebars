@@ -1,0 +1,142 @@
+<div class="container">
+  <div class="row frame">
+    <div class="col-md-7 frame">
+      {{!-- POST tweet --}}
+      <form action="/tweets" method="POST" class="comment">
+        <div class="form-group">
+          <div class="head-title">
+            <h3>Home</h3>
+          </div>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="comment-label input-group-text d-flex align-items-start">
+                <object class="user-img" data="https://via.placeholder.com/50" type="image/png">
+                  <img class="user-img" src="{{this.User.avatar}}">
+                </object>
+              </span>
+            </div>
+            <textarea class="form-control" id="comment-input" rows="3" name="description"
+              placeholder="What's on your mind? ...140 characters" maxlength="140" required></textarea>
+            <div class="invalid-feedback feedback">
+              Please enter your tweet
+            </div>
+          </div>
+        </div>
+        <div class="submit text-right">
+          <input type="hidden" name="userId" value="{{user.id}}" />
+          <button type="submit" class="btn btn-outline-primary btn-round btn-sm mb-3 mr-3">Tweet</button>
+        </div>
+      </form>
+
+      {{!-- tweets --}}
+      <div class="tweetsContainer frame">
+        {{#each tweets}}
+        {{!-- tweet card --}}
+        <div class="tweet-card shadow p-3 item">
+          <div class="row">
+            <div class="col-2">
+              <a href="/users/{{this.User.id}}/tweets">
+                <object class="user-img" data="https://via.placeholder.com/50" type="image/png">
+                  <img class="user-img" src="{{this.User.avatar}}">
+                </object>
+              </a>
+            </div>
+            <div class="col-10">
+              <div>
+                <a href="/users/{{this.User.id}}/tweets">@{{this.User.name}}, </a>
+                <span class="time-text">{{moment this.updatedAt}}</span>
+              </div>
+
+              <p class="text-light">{{this.description}}</p>
+              <span>
+                <a href="/tweets/{{this.id}}/replies" class="tweet-card-icon">
+                  <i class="fa fa-comment-o" aria-hidden="true"></i>&nbsp; {{this.numOfReplies}}
+                </a>
+              </span>
+              {{#if this.isLiked}}
+              <form action="/tweets/{{this.id}}/unlike" method="POST" class="d-inline ml-5">
+                <input type="hidden" name="tweet_id" value="{{this.id}}" />
+                <button type="submit" class="tweet-card-icon">
+                  <i class="fa fa-heart text-danger" aria-hidden="true"></i>&nbsp; {{this.numOfLikes}}
+                </button>
+              </form>
+              {{else}}
+              <form action="/tweets/{{this.id}}/like" method="POST" class="d-inline ml-5">
+                <input type="hidden" name="tweet_id" value="{{this.id}}" />
+                <button type="submit" class="tweet-card-icon">
+                  <i class="fa fa-heart-o" aria-hidden="true"></i>&nbsp; {{this.numOfLikes}}
+                </button>
+              </form>
+              {{/if}}
+            </div>
+          </div>
+
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="col-md-5 frame">
+      {{!-- Top Users --}}
+      <div class="top-users-title ml-2">
+        <h3>Who to follow</h3>
+      </div>
+      <ul class="top-users list-group">
+        {{#each users}}
+        {{!-- User card --}}
+        <li class="list-group-item user-card item shadow p-3 ml-3">
+          <div class="row">
+            <div class="col-3">
+              <a href="/users/{{this.id}}/tweets">
+                <object class="user-img" data="https://via.placeholder.com/50" type="image/png">
+                  <img class="user-img" src="{{his.avatar}}">
+                </object>
+              </a>
+            </div>
+            <div class="col-9">
+              <h6><a href="/users/{{this.id}}/tweets">@{{this.name}}</a></h6>
+              <p class="text-light">{{this.introduction}}</p>
+              <div class="follow text-right">
+                {{#if this.isFollowed }}
+                <form action="/followships/{{this.id}}?_method=DELETE" method="POST" style="display: contents;">
+                  <button type="submit" class="btn btn-outline-danger btn-round btn-sm">
+                    Unfollow
+                  </button>
+                </form>
+                {{else}}
+                <form action="/followships" method="POST" style="display: contents;">
+                  <input type="hidden" name="id" value="{{this.id}}" />
+                  <button type="submit" class="btn btn-outline-dark btn-round btn-sm">
+                    Follow
+                  </button>
+                </form>
+                {{/if}}
+              </div>
+            </div>
+          </div>
+        </li>
+        {{/each}}
+        <li class="list-group-item more ml-3">no more</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  let addNewTweet = document.getElementById('comment-input')
+  addNewTweet.addEventListener('input', displayTweetLength)
+  function displayTweetLength(event) {
+    let feedback = addNewTweet.nextElementSibling
+    let tweetLength = this.value.length
+    if (tweetLength < 140 && tweetLength > 0) {
+      feedback.innerHTML = `You have entered ${tweetLength} characters, ${140 - tweetLength} left`
+      feedback.style.display = 'inherit'
+      feedback.classList.add('text-success')
+    } else if (tweetLength === 0) {
+      feedback.innerHTML = 'Please enter your tweet'
+      feedback.classList.remove('text-success')
+    } else {
+      feedback.innerHTML = `You have entered ${tweetLength} characters!`
+    }
+  }
+</script>

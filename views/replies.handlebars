@@ -1,0 +1,176 @@
+<div class="row mt-3">
+  <div class="col-md-3">
+    <div class="text-center mt-5">
+      <a href="/users/{{tweet.User.id}}/tweets">
+        <object class="profile-img" data="https://via.placeholder.com/150" type="image/png">
+          <img class="user-img" src="{{tweet.User.avatar}}">
+        </object>
+      </a>
+      <a href="/users/{{tweet.User.id}}">
+        <h3>{{profile.name}}</h3>
+      </a>
+    </div>
+    <p class="text-light">{{tweet.User.introduction}}</p>
+    <br />
+    <div class="aside-menu">
+      <h5>
+        <a class="text-light" href="/users/{{tweet.User.id}}/tweets">Tweets <span
+            class="badge profile-badge">{{profile.Tweets.length}}</span>
+        </a>
+      </h5>
+      <h5>
+        <a class="text-light" href="/users/{{tweet.User.id}}/followings">Following <span
+            class="badge profile-badge">{{profile.Followings.length}}</span>
+        </a>
+      </h5>
+      <h5>
+        <a class="text-light" href="/users/{{tweet.User.id}}/followers">Follower <span
+            class="badge profile-badge">{{profile.Followers.length}}</span>
+        </a>
+      </h5>
+      <h5>
+        <a class="text-light" href="/users/{{tweet.User.id}}/likes">
+          Like
+          <span class="badge profile-badge">{{profile.Likes.length}}</span>
+        </a>
+      </h5>
+    </div>
+    <br />
+    <div class="text-center">
+      {{#ifCond user.id profile.id}}
+      <a href="/users/{{user.id}}/edit" class="btn btn-outline-primary btn-round">Edit Profile</a>
+      {{else}}
+
+      {{#if profile.isFollowed }}
+      <form action="/followships/{{profile.id}}?_method=DELETE" method="POST" style="display: contents;">
+        <button type="submit" class="btn btn-outline-danger btn-round">Unfollow</button></form>
+      {{else}}
+      <form action="/followships" method="POST" style="display: contents;">
+        <input type="number" name="id" value="{{profile.id}}" class="d-none">
+        <button type="submit" class="btn btn-outline-primary btn-round">Follow</button>
+      </form>
+      {{/if}}
+      {{/ifCond}}
+    </div>
+
+  </div>
+
+  <br />
+
+  {{!-- tweet card --}}
+  <div class="col-md-9 mt-5">
+    <h3>Tweet</h3>
+    <div class="tweet-card rounded p-3">
+      <div class="row">
+        <div class="col-2">
+          <a href="/users/{{tweet.User.id}}/tweets">
+            <object class="user-img" data="https://via.placeholder.com/50" type="image/png">
+              <img class="user-img" src="{{tweet.User.avatar}}">
+            </object>
+          </a>
+        </div>
+        <div class="col-10">
+          <h6><a href="/users/{{tweet.User.id}}/tweets">@{{tweet.User.name}}, </a>
+            <span class="time-text">{{moment tweet.updatedAt}}</span></h6>
+
+          <p class="text-light">{{tweet.description}}</p>
+
+
+          <span>
+            <a href="/tweets/{{tweet.id}}/replies" class="tweet-card-icon">
+              <i class="fa fa-comment-o" aria-hidden="true"></i>&nbsp; {{tweet.numOfReplies}}
+            </a>
+          </span>
+
+          {{#if tweet.isLiked}}
+          <form action="/tweets/{{tweet.id}}/unlike" method="POST" class="d-inline ml-5">
+            <input type="hidden" name="tweet_id" value="{{this.id}}" />
+            <button type="submit" class="tweet-card-icon">
+              <i class="fa fa-heart text-danger" aria-hidden="true"></i>&nbsp; {{tweet.numOfLikes}}
+            </button>
+          </form>
+          {{else}}
+          <form action="/tweets/{{tweet.id}}/like" method="POST" class="d-inline ml-5">
+            <input type="hidden" name="tweet_id" value="{{this.id}}" />
+            <button type="submit" class="tweet-card-icon">
+              <i class="fa fa-heart-o" aria-hidden="true"></i>&nbsp; {{tweet.numOfLikes}}
+            </button>
+          </form>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+    <br />
+
+    {{!-- replies --}}
+    <h4 class="ml-4">Replies</h4>
+    {{!-- reply card --}}
+    {{#each replies}}
+    <div class="reply-card rounded shadow p-3 m-3">
+      <div class="row">
+        <div class="col-2">
+          <a href="/users/{{this.User.id}}/tweets">
+            <object class="user-img" data="https://via.placeholder.com/50" type="image/png">
+              <img class="user-img" src="{{this.User.avatar}}" width="50px" height="50px">
+            </object>
+          </a>
+        </div>
+        <div class="col-10">
+          <h6><a href="/users/{{this.User.id}}/tweets">@{{this.User.name}}, </a>
+            <span class="time-text">{{moment this.updatedAt}}</span></h6>
+          <p class="text-light">{{this.comment}}</p>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+
+    <br />
+    <br />
+
+    <div>
+      {{!-- comment --}}
+      <form action="/tweets/{{tweet.id}}/replies" method="POST" class="add-reply">
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="comment-label input-group-text d-flex align-items-start">
+                <object class="user-img" data="https://via.placeholder.com/50" type="image/png">
+                  <img class="user-img" src="{{this.User.avatar}}">
+                </object>
+              </span>
+            </div>
+            <textarea class="form-control" id="comment-input" rows="3" name="newReply"
+              placeholder="Add comment ...140 characters" maxlength="140" required></textarea>
+            <div class="invalid-feedback feedback">
+              Please enter your tweet
+            </div>
+          </div>
+        </div>
+        <div class="submit text-right">
+          <input type="hidden" name="userId" value="{{user.id}}" />
+          <button type="submit" class="btn btn-outline-primary btn-round btn-sm mb-3 mr-3">Reply</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  let addNewReply = document.getElementById('comment-input')
+  addNewReply.addEventListener('input', displayReplyLength)
+  function displayReplyLength(event) {
+    let feedback = addNewReply.nextElementSibling
+    let replyLength = this.value.length
+    if (replyLength < 140 && replyLength > 0) {
+      feedback.innerHTML = `You have entered ${replyLength} characters, ${140 - replyLength} left`
+      feedback.style.display = 'inherit'
+      feedback.classList.add('text-success')
+    } else if (replyLength === 0) {
+      feedback.innerHTML = 'Please enter your comment'
+      feedback.classList.remove('text-success')
+    } else {
+      feedback.innerHTML = `You have entered ${replyLength} characters!`
+    }
+  }
+</script>
