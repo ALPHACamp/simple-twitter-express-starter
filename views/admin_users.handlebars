@@ -1,0 +1,33 @@
+{{> admin_nav }}
+{{> message }}
+<div class="row d-flex justify-content-center">
+
+    <div class="admiv_tweets col-10">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">No.</th>
+                    <th scope="col">User</th>
+                    <th scope="col">Tweets</th>
+                    <th scope="col">Followings</th>
+                    <th scope="col">Follower</th>
+                    <th scope="col">Like</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each users}}
+                <tr>
+                    <td>{{this.no}}
+                    </td>
+                    <td><img class="h-25  rounded-circle mr-2" src="{{this.avatar}}" alt="{{this.id}}大頭貼">{{this.name}}
+                    </td>
+                    <td>{{this.TweetsAcount}}</td>
+                    <td>{{this.FollowingsAcount}}</td>
+                    <td>{{this.FollowersAcount}}</td>
+                    <td>{{this.LikesAcount}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>
