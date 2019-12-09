@@ -1,0 +1,107 @@
+<section class="mt-4" id="replies">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="text-center">
+          <div class="mb-2">
+            <img src="{{{tweetUser.avatar}}}" alt="avatar" style="height:300px;width:300px">
+            <h1 class="mb-2">{{{tweetUser.name}}}</h1>
+          </div>
+          <p class="mb-2">{{{tweetUser.introduction}}}
+          </p>
+          <ul class="list-group mb-2">
+            <li class="list-group-item"><a href="/users/{{{tweetUser.id}}}/tweets">Tweets
+                {{{tweetUser.Tweets.length}}}</a></li>
+            <li class="list-group-item"><a href="/users/{{{tweetUser.id}}}/followings">Followings
+                {{{tweetUser.Followings.length}}}</a></li>
+            <li class="list-group-item"><a href="/users/{{{tweetUser.id}}}/followers">Followers
+                {{{tweetUser.Followers.length}}}</a></li>
+            <li class="list-group-item"><a href="/users/{{{tweetUser.id}}}/likes">likes {{{tweetUser.Likes.length}}}</a>
+            </li>
+          </ul>
+          {{!-- button --}}
+          <div class="mb-4">
+            {{#ifCond currentUser.id tweetUser.id}}
+            <a href="/users/{{{currentUser.id}}}/edit" class="btn btn-outline-primary">Edit Profile</a>
+            {{else}}
+            {{#if isFollowed}}
+            <form action="/followships/{{{tweetUser.id}}}?_method=DELETE" method="POST">
+              <button type="submit" class="btn btn-danger badge-pill">Following</button>
+            </form>
+            {{else}}
+            <form action="/followships" method="POST">
+              <input type="number" name="id" value="{{{tweetUser.id}}}" class="d-none">
+              <button type="submit" class="btn btn-primary badge-pill">Follow</button>
+            </form>
+            {{/if}}
+            {{/ifCond}}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        {{!-- Tweets --}}
+        <h1>Tweets</h1>
+        <div class="card my-1">
+          <div class="row">
+            <div class="col-auto">
+              <img class="img-responsive center-block" src="{{{tweetUser.avatar}}}" style="width:150px; height: 150px;">
+            </div>
+            <div class="col">
+              <div class="card-block px-2">
+                <a href="#">
+                  <span class="pt-2">{{{tweetUser.name}}}, {{{moment tweet.createdAt}}}</span>
+                </a>
+                <p>{{{tweet.description}}}</p>
+                <a href='#' class="mr-3 mt-3">
+                  <i class="fas fa-comment-dots"></i> {{{replies.length}}}</a>
+                {{!-- Like button start --}}
+                {{#if likedByUser}}
+                <form action="/tweets/{{{tweet.id}}}/unlike" method="POST" class="d-inline ">
+                  <input type="number" name="id" value="{{{tweet.id}}}" class="d-none">
+                  <button type="submit" class="btn text-danger btn-link p-0 mb-1"> <i class="fas fa-heart"></i>
+                    {{{tweet.Likes.length}}} </button>
+                </form>
+                {{else}}
+                <form action="/tweets/{{{tweet.id}}}/like" method="POST" class="d-inline ">
+                  <input type="number" name="id" value="{{{tweet.id}}}" class="d-none">
+
+                  <button type="submit" class="btn btn-link p-0 mb-1"><i class="far fa-heart"></i>
+                    {{{tweet.Likes.length}}} </button>
+                </form>
+                {{/if}}
+                {{!-- Like button end --}}
+              </div>
+            </div>
+          </div>
+        </div>
+        {{!-- Replies --}}
+        <h1>Replies</h1>
+        {{#each replies}}
+        <div class="card my-1">
+          <div class="row">
+            <div class="col-auto">
+              <img class="img-responsive center-block" src="{{{this.User.avatar}}}" ,
+                style="width:150px; height: 150px;">
+            </div>
+            <div class="col">
+              <div class="card-block px-2">
+                <a href="/users/{{{this.User.id}}}/tweets">
+                  <span class="pt-2">{{{this.User.name}}}, {{{moment this.createdAt}}}</span>
+                </a>
+                <p>{{{this.comment}}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/each}}
+        {{!-- Reply form --}}
+        <form class="mt-4" action="/tweets/{{{tweet.id}}}/replies" method="POST">
+          <div class="md-form">
+            <textarea name="comment" class="md-textarea form-control" rows="6"></textarea>
+            <button type="submit" class="btn btn-primary badge-pill my-1 d-block mr-0 ml-auto">Reply</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

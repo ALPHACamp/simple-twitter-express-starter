@@ -1,0 +1,88 @@
+<section class="mt-4" id="followings">
+  <div class=" container">
+    <div class="row">
+      <div class="col-md-4">
+        <!--user profile-->
+        <div class="text-center">
+          <div class="mb-2">
+            <img src="{{{user.avatar}}}" alt="avatar" style="height:300px;width:300px">
+            <h1 class="mb-2">{{{user.name}}}</h1>
+          </div>
+          <p class="mb-2">{{{user.introduction}}}
+          </p>
+          <ul class="list-group mb-2">
+            <li class="list-group-item"><a href="/users/{{{user.id}}}/tweets">Tweets {{{user.Tweets.length}}}</a></li>
+            <li class="list-group-item"><a href="/users/{{{user.id}}}/followings">Followings
+                {{{user.Followings.length}}}</a></li>
+            <li class="list-group-item list-group-item-action active">Followers {{{user.Followers.length}}}</li>
+            <li class="list-group-item"><a href="/users/{{{user.id}}}/likes">likes {{{user.Likes.length}}}</a></li>
+          </ul>
+          <!--button-->
+          <div>
+            {{#if isCurrentUser}}
+            <a href="/users/{{{user.id}}}/edit" class="btn btn-outline-primary">Edit Profile</a>
+            {{else}}
+            {{#if isFollowed}}
+            <form action="/followships/{{{user.id}}}?_method=DELETE" method="POST">
+              <button type="submit" class="btn btn-danger badge-pill">Following</button>
+            </form>
+            {{else}}
+            <form action="/followships" method="POST">
+              <input type="number" name="id" value="{{{user.id}}}" class="d-none">
+              <button type="submit" class="btn btn-primary badge-pill">Follow</button>
+            </form>
+            {{/if}}
+            {{/if}}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <h1 class="p-2">Followers</h1>
+        <div class="row">
+          <!--tweets card-->
+          {{#if user.Followers}}
+          {{#each user.Followers}}
+          <div class="col-md-6 p-2">
+            <div class="card shadow-sm">
+              <div class="row">
+                <div class="col-auto">
+                  <img class="img-responsive center-block" src="{{{this.avatar}}}" style="height:150px;width:150px">
+                </div>
+                <div class="col">
+                  <div class="card-block">
+                    <a href="/users/{{{this.id}}}/tweets">
+                      <span class="pt-2">{{{this.name}}}</span>
+                    </a>
+                    <p>{{{this.introduction}}}</p>
+                    <!--button-->
+                    {{#if isNotCurrentUser}}
+                    {{#if this.followerHaveCurrentUser}}
+                    <form action="/followships/{{{this.id}}}?_method=DELETE" method="POST" style="display: inline;">
+                      <button type="submit" class="btn btn-danger mb-2 badge-pill">Following</button>
+                    </form>
+                    {{else}}
+                    <form action="/followships" method="POST">
+                      <input type="number" name="id" value="{{{this.id}}}" class="d-none">
+                      <button type="submit" class="btn btn-primary mb-2 badge-pill">Follow</button>
+                    </form>
+                    {{/if}}
+                    {{/if}}
+                    <!--end of button-->
+                  </div>
+                </div>
+                <hr>
+              </div>
+            </div>
+          </div>
+          {{/each}}
+          {{else}}
+          <h4 class="ml-5 p-2">Don’t have any followers yet</h4>
+          {{/if}}
+          <!--end of card-->
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+</section>

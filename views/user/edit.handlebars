@@ -1,0 +1,46 @@
+<section class="mt-4" id="edit">
+  <div class="container">
+    <form action="/users/{{user.id}}/edit" method="POST" class="row" enctype="multipart/form-data">
+      <div class="col-md-2"></div>
+      <div class="col-md-2">
+        <!--upload avatar-->
+        <div class="mb-2">
+          <img id="preview-avatar" src="{{user.avatar}}" alt="avatar" style="height:150px;width:150px">
+          <label for="avatar" class="btn btn-primary btn-block mt-2">Browse files...</label>
+          {{!-- input tag is actually hided (see css) --}}
+          <input type="file" id="avatar" class="form-control-file" name="avatar"
+            accept="image/gif, image/jpeg, image/png" />
+        </div>
+
+      </div>
+      <div class="col-md-6">
+        <input name="name" type="text" value={{{user.name}}} class="form-control mb-4" placeholder="Name">
+        <textarea name="introduction" class="md-textarea form-control" rows="6"
+          placeholder="type anything about you here...">{{{user.introduction}}}</textarea>
+        <button type="submit" class="btn btn-primary d-block mt-2 ml-auto mr-0">Update</button>
+      </div>
+      <div class="col-md-2"></div>
+    </form>
+  </div>
+</section>
+
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script>
+  $(document).ready(function () {
+    let readURL = function (input) {
+      console.log(input.files)
+      if (input.files && input.files[0]) {
+        let reader = new FileReader();
+        reader.onload = function (e) {
+          $("#preview-avatar").attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    $("#avatar").change(function () {
+      readURL(this);
+    });
+  })
+
+</script>
